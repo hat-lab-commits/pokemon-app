@@ -8,20 +8,22 @@
 <body>
 
   <h1>ポケモン図鑑</h1>
+  <div class="main-layout">
 
-  <input type="text" id="pokemonName" placeholder="ポケモン名">
-  <button id="btn">検索</button>
+    <div class="search-area">
+      <input type="text" id="pokemonName" placeholder="ポケモン名">
+      <button id="btn">検索</button>
 
-  <div id="result"></div>
-  <!--登録ボタン-->
-  <button id="favBtn">お気に入り登録</button>
-  <ul id="favoritesList"></ul>
-  <!--表示エリア-->
-  <div class="favorites-box">
-    <h3>お気に入り</h3>
-    <ul id ="favoritesList"></ul>
+      <div id="result"></div>
+      <button id="favBtn">お気に入り登録</button>
+    </div>  
+
+    <div class="favorites-box">
+      <h3>お気に入り</h3>
+    <ul id="favoritesList"></ul>
   </div>
 
+  </div>
   <script src="app.js"></script>
 </body>
 </html>

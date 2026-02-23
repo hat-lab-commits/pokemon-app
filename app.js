@@ -14,18 +14,27 @@ function renderFavorites() {
       key => pokemonDict[key] == id
     );
     const li = document.createElement("li");
-    li.textContent = name || id;
-    //削除ボタン作成
-    const deletBtn = document.createElement("button");
-    deletBtn.textContent = "削除";
+    li.classList.add("favorites-card");
+    
+    const title = document.createElement("div");
+    title.textContent = name || id;
+    title.classList.add("fav-title");
 
-    deletBtn.onclick = () => {
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "x";
+    deleteBtn.classList.add("delete-btn");
+
+    li.appendChild(title);
+    li.appendChild(deleteBtn);
+    list.appendChild(li);
+
+    deleteBtn.onclick = () => {
       favorites = favorites.filter(favId => favId !== id);
       localStorage.setItem("favorites", JSON.stringify(favorites));
       renderFavorites();
     };
 
-    li.appendChild(deletBtn);
+    li.appendChild(deleteBtn);
     list.appendChild(li);
   });
 }
@@ -51,6 +60,27 @@ const typeColors = {
   fairy: "#D685AD"
 };
 
+const typeJa = {
+  normal: "ノーマル",
+  fire: "ほのお",
+  water: "みず",
+  electric: "でんき",
+  grass: "くさ",
+  ice: "こおり",
+  fighting: "かくとう",
+  poison: "どく",
+  ground: "じめん",
+  flying: "ひこう",
+  psychic: "エスパー",
+  bug: "むし",
+  rock: "いわ",
+  ghost: "ゴースト",
+  dragon: "ドラゴン",
+  dark: "あく",
+  steel: "はがね",
+  fairy: "フェアリー"
+};
+
 btn.addEventListener("click", async () => {
   const input = document.getElementById("pokemonName").value;
 
@@ -62,28 +92,22 @@ btn.addEventListener("click", async () => {
     favorites.push(pokemonId);
     localStorage.setItem("favorites",JSON.stringify(favorites));
     console.log("今のお気に入り;", favorites);
+  
 
     if (!pokemonId) {
       alert("そのポケモンはいません");
       return;
     }
 
-    // ポケモンデータ取得
-    const apiRes = await fetch(
-      `https://pokeapi.co/api/v2/pokemon/${pokemonId}`
-    );
-    const pokemonData = await apiRes.json();
-    console.log("図鑑番号",pokemonData.id);
-
-    // 日本語名取得
-    const speciesRes = await fetch(pokemonData.species.url);
+    // ①図鑑番号から　species　取る
+    const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`);
     const speciesData = await speciesRes.json();
 
     const japaneseName = speciesData.names.find(
-      n => n.language.name === "ja"
+      n => n.language.name ===  "ja"
     ).name;
 
-    // 進化情報取得
+    // ②進化情報取得
     const evoRes = await fetch(speciesData.evolution_chain.url);
     const evoData = await evoRes.json();
 
@@ -94,31 +118,52 @@ btn.addEventListener("click", async () => {
       evolutions.push(evo.species.name);
       evo = evo.evolves_to[0];
     }
+    // ③　全フォーム取得
+    const forms = speciesData.varieties;
+    
+    //　④　表示用HTML
+    let html = "";
 
-    // データ整形
-    const image = pokemonData.sprites.front_default;
-    const weight = pokemonData.weight / 10;
+    //　⑤　フォーム全部回す
+    for (const form of forms) {
+      const formName = form.pokemon.name;
 
-    const typesHTML = pokemonData.types.map(t => {
-      const color = typeColors[t.type.name];
-      return `<span class="type" style="background:${color}">
-                ${t.type.name}
-              </span>`;
-    }).join("");
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${formName}`);
+      const data = await res.json();
 
-    const evoHTML = evolutions.join(" → ");
+      const image = data.sprites.front_default;
+      const weight = data.weight / 10;
 
-    // 表示
-    document.getElementById("result").innerHTML = `
-      <div class="card">
-        <h2>${japaneseName}</h2>
-        <img src="${image}">
-        <div>${typesHTML}</div>
-        <p>体重: ${weight} kg</p>
-        <p>進化: ${evoHTML}</p>
-      </div>
-    `;
-    favBtn.onclick = () => {
+      const typesHTML = data.types.map(t => {
+        const typeName = t.type.name;
+        const color = typeColors[typeName];
+        const japaneseType = typeJa[typeName];
+        
+        return `<span class="type" style="background:${color}">
+                  ${japaneseType}
+                </span>`;
+
+      }).join("");
+
+      const japaneseName = pokemonDict[data.name];
+
+      html += `
+        <div class="card">
+            <img src="${image}" class="poke-img">
+            <h2>${japaneseName}</h2>
+            <p>${typesHTML}</p>
+            <p>体重: ${weight} kg </p>
+            <p>進化: ${evolutions.join("->")}</p>
+            <button class="fav-inside-btn">お気に入り登録</button>  
+        </div>
+        
+      `;
+    }
+
+    // ⑥　表示
+    document.getElementById("result").innerHTML = html;
+     
+    document.querySelector(".fav-inside-btn").onclick = () => {
       if (!favorites.includes(pokemonId)) {
         favorites.push(pokemonId);
         localStorage.setItem("favorites", JSON.stringify(favorites));
