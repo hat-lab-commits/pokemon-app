@@ -27,3 +27,8 @@
 ー　タイプ完全日本語化
 ー　UIデザイン改善
 ー　お気に入り横スクロール化
+
+## 2026 feburary 24th  what I did today
+- species APIから日本語名取得
+- 進化情報を表示できるようにした
+- エラー修正（speciesData参照ミス）
