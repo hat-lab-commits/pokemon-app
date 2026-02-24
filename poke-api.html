@@ -10,20 +10,25 @@
   <h1>ポケモン図鑑</h1>
   <div class="main-layout">
 
+    <div id="speciesInfo"></div>
     <div class="search-area">
       <input type="text" id="pokemonName" placeholder="ポケモン名">
       <button id="btn">検索</button>
-
-      <div id="result"></div>
-      <button id="favBtn">お気に入り登録</button>
-    </div>  
-
+      <button id = "resetBtn">リセット</button>
+      <button id ="clearFav">お気に入り全削除</button>
+    </div> 
+   
+    <div class ="content-area"> 
+     <div id="result"></div>
+    </div>
+    
     <div class="favorites-box">
       <h3>お気に入り</h3>
-    <ul id="favoritesList"></ul>
+      <div id="favorites"></div>
+    </div>  
+ 
   </div>
-
-  </div>
-  <script src="app.js"></script>
+ 
 </body>
+<script src="app.js"></script>
 </html>
