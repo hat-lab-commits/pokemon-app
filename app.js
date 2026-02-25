@@ -200,7 +200,7 @@ btn.addEventListener("click", async () => {
       if (formName.includes("alola")) {
         displayName += " (アローらの姿) ";
       }
-      if (formName.includes("maga")) {
+      if (formName.includes("mega")) {
         displayName += " (メガシンカ) ";
       }
       if (formName.includes("hisui")) {
@@ -235,6 +235,12 @@ btn.addEventListener("click", async () => {
             <p class="info">身長: ${height}  m </p>
             <p class= "info">進化: ${evolutionJa.join(" -> ")}</p>
             <button 
+             class="cry-btn"
+             data-cry="${data.cries.latest}"
+            >鳴き声</button>
+
+            </button>
+            <button 
             class="fav-inside-btn"
             data-id="${formName}"
             data-name="${displayName}"
@@ -249,6 +255,22 @@ btn.addEventListener("click", async () => {
     // ⑥　表示
     document.getElementById("speciesInfo").innerHTML = leftHTML;
     document.getElementById("result").innerHTML = html;
+
+    let currentAudio = null;
+
+     document.querySelectorAll(".cry-btn").forEach(btn => {
+         btn.onclick = () => {
+           const cryUrl = btn.dataset.cry;
+
+           if (currentAudio) {
+             currentAudio.pause ();
+             currentAudio.currentTime = 0;
+           }
+
+           currentAudio = new Audio(cryUrl);
+           currentAudio.play();
+         };
+       });
     document.querySelectorAll(".fav-inside-btn").forEach(btn => {
       btn.onclick = () => {
         
@@ -296,7 +318,8 @@ btn.addEventListener("click", async () => {
 
   resetBtn.addEventListener("click", () => {
     document.getElementById("pokemonName").value = "";
-    document.getElementById("result").innerHTML = ""; 
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("speciesInfo").innerHTML = ""; 
   });
 
   const clearFav =document.getElementById("clearFav");
